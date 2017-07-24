@@ -1,0 +1,197 @@
+###############################################################################################
+# DATE: 24 July 2017
+# AUTHOR: Alessandro Negrini
+# DESCRIPTION: THIS IS NOT A CODE THAT CAN BE COMPILED, IT IS ONLY A COLLECTION OF SPARKS COMMANDS LAUNCHED ON SPARK-SHELL. EVEN OUTPUTS HAVE BEEN REPORTED
+###############################################################################################
+
+# open the shell
+> spark-shell
+
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/usr/lib/zookeeper/lib/slf4j-log4j12-1.7.5.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/usr/lib/flume-ng/lib/slf4j-log4j12-1.7.5.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel).
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /___/ .__/\_,_/_/ /_/\_\   version 1.6.0
+      /_/
+
+Using Scala version 2.10.5 (Java HotSpot(TM) 64-Bit Server VM, Java 1.8.0_60)
+Type in expressions to have them evaluated.
+Type :help for more information.
+17/07/24 22:47:26 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+17/07/24 22:47:26 WARN util.Utils: Your hostname, localhost resolves to a loopback address: 127.0.0.1; using 192.168.245.146 instead (on interface eth1)
+17/07/24 22:47:26 WARN util.Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+17/07/24 22:47:40 WARN shortcircuit.DomainSocketFactory: The short-circuit local reads feature cannot be used because libhadoop cannot be loaded.
+Spark context available as sc (master = local[*], app id = local-1500922049117).
+SQL context available as sqlContext.
+
+# load dataset (that is stored in a cluster) into an RDD
+scala> val rdd_origin = sc.textFile("/user/training/ScrutiniFI.csv");
+rdd_origin: org.apache.spark.rdd.RDD[String] = /user/training/ScrutiniFI.csv MapPartitionsRDD[1] at textFile at <console>:27
+
+scala> var num_rows = rdd_origin.count()
+num_rows: Long = 8000
+
+scala> val rdd_origin_split = rdd_origin.map(line => line.split(';'))
+rdd_origin_split: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[2] at map at <console>:29
+
+scala> rdd_origin_split.take(5)
+res0: Array[Array[String]] = Array(Array(DESCREGIONE, DESCPROVINCIA, DESCCOMUNE, ELETTORI, ELETTORI_M, VOTANTI, VOTANTI_M, NUMVOTISI, NUMVOTINO, NUMVOTIBIANCHI, NUMVOTINONVALIDI, NUMVOTICONTESTATI), Array(ABRUZZO, "CHIETI                        ", "ALTINO                                                                                              ", 2288, 1101, 1496, 775, 533, 953, 2, 8, 0), Array(ABRUZZO, "CHIETI                        ", "ARCHI                                                                                               ", 1785, 861, 1241, 632, 442, 782, 3, 14, 0), Array(ABRUZZO, "CHIETI                        ", "ARI                                                                                                 ", 831, 402, 617, 328, 241, 366, 6, 4, 0), Array(ABRUZZO...
+
+scala> val rdd_origin_split_trim = rdd_origin_split.map(arr => arr.map(_.trim))
+rdd_origin_split_trim: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[3] at map at <console>:31
+
+scala> rdd_origin_split_trim.take(5)
+res1: Array[Array[String]] = Array(Array(DESCREGIONE, DESCPROVINCIA, DESCCOMUNE, ELETTORI, ELETTORI_M, VOTANTI, VOTANTI_M, NUMVOTISI, NUMVOTINO, NUMVOTIBIANCHI, NUMVOTINONVALIDI, NUMVOTICONTESTATI), Array(ABRUZZO, CHIETI, ALTINO, 2288, 1101, 1496, 775, 533, 953, 2, 8, 0), Array(ABRUZZO, CHIETI, ARCHI, 1785, 861, 1241, 632, 442, 782, 3, 14, 0), Array(ABRUZZO, CHIETI, ARI, 831, 402, 617, 328, 241, 366, 6, 4, 0), Array(ABRUZZO, CHIETI, ARIELLI, 939, 453, 612, 304, 194, 410, 1, 7, 0))
+
+scala> rdd_origin_split_trim.count()
+res2: Long = 8000
+
+
+scala> val header = rdd_origin_split_trim.filter(arr => arr.contains("DESCREGIONE"))
+header: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[4] at filter at <console>:33
+
+scala> header.take(2)
+res3: Array[Array[String]] = Array(Array(DESCREGIONE, DESCPROVINCIA, DESCCOMUNE, ELETTORI, ELETTORI_M, VOTANTI, VOTANTI_M, NUMVOTISI, NUMVOTINO, NUMVOTIBIANCHI, NUMVOTINONVALIDI, NUMVOTICONTESTATI))
+
+scala> val rdd_body = rdd_origin_split_trim.filter(arr => !arr.contains("DESCREGIONE"))
+rdd_body: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[5] at filter at <console>:33
+
+scala> rdd_body.take(5)
+res4: Array[Array[String]] = Array(Array(ABRUZZO, CHIETI, ALTINO, 2288, 1101, 1496, 775, 533, 953, 2, 8, 0), Array(ABRUZZO, CHIETI, ARCHI, 1785, 861, 1241, 632, 442, 782, 3, 14, 0), Array(ABRUZZO, CHIETI, ARI, 831, 402, 617, 328, 241, 366, 6, 4, 0), Array(ABRUZZO, CHIETI, ARIELLI, 939, 453, 612, 304, 194, 410, 1, 7, 0), Array(ABRUZZO, CHIETI, ATESSA, 8454, 4121, 5860, 3006, 1952, 3836, 45, 27, 0))
+
+scala> rdd_body.count()
+res5: Long = 7999
+
+scala> rdd_body.filter(arr => arr.contains("")).filter( arr => arr.contains("ROVIGO"))
+res12: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[11] at filter at <console>:36
+
+scala> rdd_body.filter(arr => arr.contains("")).filter( arr => arr.contains("ROVIGO")).take(5)
+res13: Array[Array[String]] = Array(Array(VENETO, ROVIGO, GAIBA, 840, "", 642, 320, 275, 361, 3, 3, 0))
+
+scala> val rdd_1=rdd_body.filter(arr => !arr.contains("")).filter( arr => !arr.contains("ROVIGO"))
+rdd_1: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[15] at filter at <console>:35
+
+scala> rdd_1.filter(arr => arr.contains("")).filter( arr => arr.contains("ROVIGO")).take(5)
+res14: Array[Array[String]] = Array()
+
+scala> rdd_1.count()
+res15: Long = 7946
+
+scala> rdd_body.count()
+res16: Long = 7999
+
+scala> rdd_body.filter(arr => arr.contains(""))
+res17: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[18] at filter at <console>:36
+
+scala> rdd_body.filter(arr => arr.contains("")).take(5)
+res18: Array[Array[String]] = Array(Array(CALABRIA, COSENZA, "", 4436, 2156, 2783, 1435, 765, 1985, 10, 23, 0), Array(SICILIA, CATANIA, "", 18623, 8816, 12404, 6032, 3084, 9248, 7, 65, 0), Array(VENETO, ROVIGO, GAIBA, 840, "", 642, 320, 275, 361, 3, 3, 0), Array(""))
+
+scala> rdd_body.filter(arr => arr.contains("?"))
+res19: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[20] at filter at <console>:36
+
+scala> rdd_body.filter(arr => arr.contains("?")).take(5)
+res20: Array[Array[String]] = Array(Array(VENETO, TREVISO, CESSALTO, ?, ?, ?, 973, 712, 1188, 6, 11, 0))
+
+scala> val rdd_1=rdd_body.filter(arr => !arr.contains("?"))
+rdd_1: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[22] at filter at <console>:35
+
+scala> rdd_1.count()
+res21: Long = 7998
+
+scala> rdd_1.filter(arr => arr.contains("Nan"))
+res22: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[23] at filter at <console>:38
+
+scala> rdd_1.filter(arr => arr.contains("Nan")).take(5)
+res23: Array[Array[String]] = Array(Array(VENETO, ROVIGO, FRASSINELLE POLESINE, Nan, 585, 899, 467, 327, 560, 7, 5, 0))
+
+scala> val rdd_2=rdd_1.filter(arr => !arr.contains("Nan"))
+rdd_2: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[25] at filter at <console>:37
+
+scala> rdd_2.count()
+res24: Long = 7997
+
+scala> rdd_2.filter(arr => arr.contains("GAIBA"))
+res25: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[26] at filter at <console>:40
+
+scala> rdd_2.filter(arr => arr.contains("GAIBA")).take(3)
+res26: Array[Array[String]] = Array(Array(VENETO, ROVIGO, GAIBA, 840, "", 642, 320, 275, 361, 3, 3, 0))
+
+scala> val rdd_3=rdd_2.filter(arr => !arr.contains("GAIBA"))
+rdd_3: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[28] at filter at <console>:39
+
+scala> rdd_3.count()
+res27: Long = 7996
+
+scala> rdd_3.filter(_.forall(_.isEmpty))
+res28: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[29] at filter at <console>:42
+
+scala> rdd_3.filter(_.forall(_.isEmpty)).take(5)
+res29: Array[Array[String]] = Array(Array(""))
+
+scala> val rdd_4=rdd_3.filter(_.forall(!_.isEmpty))
+rdd_4: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[31] at filter at <console>:41
+
+scala> rdd_4.count()
+res30: Long = 7993
+
+scala> rdd_5.filter(arr => arr.contains("#893"))
+res34: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[33] at filter at <console>:44
+
+scala> rdd_5.filter(arr => arr.contains("#893")).take(5)
+res35: Array[Array[String]] = Array(Array(VENETO, VICENZA, SAN GERMANO DEI BERICI, #893, 454, 742, 384, 218, 513, 1, 10, 0))
+
+scala> rdd_5.filter(arr => arr.map(el => if(el=="#893") "893" else el))
+<console>:44: error: type mismatch;
+ found   : Array[String]
+ required: Boolean
+              rdd_5.filter(arr => arr.map(el => if(el=="#893") "893" else el))
+                                         ^
+
+scala> rdd_5.map (arr => arr.map (el => if(el=="#893") "893" else el))
+res37: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[35] at map at <console>:44
+
+scala> val rdd_6=rdd_5.map (arr => arr.map (el => if(el=="#893") "893" else el))
+rdd_6: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[36] at map at <console>:43
+
+scala> rdd_6.filter(arr => arr.contains("#893")).take(5)
+res38: Array[Array[String]] = Array()
+
+scala> rdd_6.filter(arr => arr.contains("\3360")).take(5)
+res39: Array[Array[String]] = Array()
+
+scala> rdd_6.filter(arr => arr.contains("/3360")).take(5)
+res40: Array[Array[String]] = Array(Array(VENETO, VICENZA, SOSSANO, /3360, 1694, -2629, 1350, 842, 1761, 6, 20, 0))
+
+scala> val rdd_7=rdd_6.map (arr => arr.map (el => if(el=="/3360") "3360" else el))
+rdd_7: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[40] at map at <console>:45
+
+scala> rdd_7.filter(arr => arr.contains("/3360")).take(5)
+res41: Array[Array[String]] = Array()
+
+scala> rdd_7.filter(arr => arr.contains("SICLIA")).take(5)
+res42: Array[Array[String]] = Array(Array(SICLIA, CATANIA, RANDAZZO, 8919, 4223, 5173, 2645, 1384, 3733, 16, 40, 0))
+
+scala> val rdd_8=rdd_7.map (arr => arr.map (el => if(el=="SICLIA") "SICILIA" else el))
+rdd_8: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[43] at map at <console>:47
+
+scala> val rdd_9=rdd_8.filter(arr => !arr.contains("POLINO"))
+rdd_9: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[44] at filter at <console>:49
+
+scala> val rdd_10=rdd_9.filter(arr => !arr.contains("SOSSANO"))
+rdd_10: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[45] at filter at <console>:51
+
+scala> rdd_10.count()
+res43: Long = 7993
+
+scala> val cleaned = rdd_10;
+rdd_final: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[45] at filter at <console>:51
+
+scala> rdd_cleaned.count()
+res44: Long = 7993
