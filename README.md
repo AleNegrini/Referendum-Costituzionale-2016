@@ -1,5 +1,5 @@
 # Referendum Costituzionale 2016
 
-Languages used: 
+Solution built with two different languages: 
   - Python (pandas and numpy libraries)
   - Scala + Spark
