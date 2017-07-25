@@ -11,6 +11,9 @@ Solution source code can be found in directories:
   
 Output csv files can be found in directory: 
   - output/output_python : csv file produced by python notebooks
+    - Data Cleaning.ipynb: notebook for the dataset cleaning
+    - Aggregations.ipynb: notebook that computes aggregations on the dataset
+    - Data Visualization.ipynb: notebook that visualize results
   - output/output_scala_spark : csv file produced by spark-shell code
   
 Initial dataset and intermediate files can be found at: 
