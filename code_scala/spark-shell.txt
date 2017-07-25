@@ -1,9 +1,9 @@
-###############################################################################################
+############################################################################################################################
 # DATE: 24 July 2017
 # AUTHOR: Alessandro Negrini
-# DESCRIPTION: THIS IS NOT A CODE THAT CAN BE COMPILED, IT IS ONLY A COLLECTION OF SPARKS COMMANDS LAUNCHED ON SPARK-SHELL. EVEN OUTPUTS HAVE BEEN REPORTED
-###############################################################################################
-
+# DESCRIPTION: THIS IS NOT A CODE THAT CAN BE COMPILED, IT IS ONLY A COLLECTION OF SPARKS COMMANDS LAUNCHED ON SPARK-SHELL. 
+EVEN OUTPUTS HAVE BEEN REPORTED
+############################################################################################################################
 # open the shell
 > spark-shell
 
@@ -195,3 +195,5 @@ rdd_final: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[45] at fil
 
 scala> rdd_cleaned.count()
 res44: Long = 7993
+
+
