@@ -1,5 +1,6 @@
 # Referendum Costituzionale 2016
-
-Solution built with two different languages: 
-  - Python (pandas and numpy libraries)
-  - Scala + Spark
+I solved the exercise twice:
+  1) with Python (pandas + numpy libraries) 
+  2) with Scala + Spark 
+  
+At the end of each procedure, results obtained with these two methods have been compared
