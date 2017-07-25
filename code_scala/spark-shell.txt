@@ -196,4 +196,122 @@ rdd_final: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[45] at fil
 scala> rdd_cleaned.count()
 res44: Long = 7993
 
+val rdd_regioni=rdd_cleaned.map(arr => (arr(0),(arr(0),arr(3).toInt,arr(4).toInt,arr(3).toInt-arr(4).toInt,arr(5).toInt,arr(6).toInt,arr(7).toInt,arr(8).toInt,arr(9).toInt,arr(10).toInt,arr(11).toInt)))
+rdd_regioni: org.apache.spark.rdd.RDD[(String, (String, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int))] = MapPartitionsRDD[35] at map at <console>:51
+
+scala> rdd_regioni.count()
+res40: Long = 7991
+
+scala> rdd_regioni.take(3)
+res41: Array[(String, (String, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int))] = Array((ABRUZZO,(ABRUZZO,2288,1101,1187,1496,775,533,953,2,8,0)), (ABRUZZO,(ABRUZZO,1785,861,924,1241,632,442,782,3,14,0)), (ABRUZZO,(ABRUZZO,831,402,429,617,328,241,366,6,4,0)))
+
+rdd_regioni.reduceByKey((a,b)=>(a._1+b._1,a._2+b._2,a._3+b._3,a._4+b._4,a._5+b._5,a._6+b._6,a._7+b._7,a._8+b._8,a._9+b._9,a._10+b._10,a._11+b._11))
+res60: org.apache.spark.rdd.RDD[(String, (String, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int))] = ShuffledRDD[36] at reduceByKey at <console>:54
+
+scala> rdd_regioni.take(5)
+res61: Array[(String, (String, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int))] = Array((ABRUZZO,(ABRUZZO,2288,1101,1187,1496,775,533,953,2,8,0)), (ABRUZZO,(ABRUZZO,1785,861,924,1241,632,442,782,3,14,0)), (ABRUZZO,(ABRUZZO,831,402,429,617,328,241,366,6,4,0)), (ABRUZZO,(ABRUZZO,939,453,486,612,304,194,410,1,7,0)), (ABRUZZO,(ABRUZZO,8454,4121,4333,5860,3006,1952,3836,45,27,0)))
+
+scala> rdd_regioni.reduceByKey((a,b)=>(a._1+b._1,a._2+b._2,a._3+b._3,a._4+b._4,a._5+b._5,a._6+b._6,a._7+b._7,a._8+b._8,a._9+b._9,a._10+b._10,a._11+b._11)).take(5)
+res62: Array[(String, (String, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int))] = Array((ABRUZZO,(ABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABRUZZOABR...
+scala> rdd_regioni.reduceByKey((a,b)=>(a._1,a._2+b._2,a._3+b._3,a._4+b._4,a._5+b._5,a._6+b._6,a._7+b._7,a._8+b._8,a._9+b._9,a._10+b._10,a._11+b._11)).take(5)
+res63: Array[(String, (String, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int))] = Array((ABRUZZO,(ABRUZZO,1052049,509116,542933,722930,362259,255001,461188,2117,4611,13)), (TRENTINO-ALTO ADIGE,(TRENTINO-ALTO ADIGE,792504,387839,404665,572486,282999,305322,261473,2698,2985,8)), (MARCHE,(MARCHE,1189181,574341,614840,866233,434942,385768,472765,2609,5074,17)), (SICILIA,(SICILIA,4013248,1915609,2097639,2271850,1143565,639629,1610847,4451,16822,101)), (LAZIO,(LAZIO,4402145,2097786,2304359,3044673,1486411,1108768,1914397,4678,16750,80)))
+
+scala> rdd_regioni.reduceByKey((a,b)=>(a._1,a._2+b._2,a._3+b._3,a._4+b._4,a._5+b._5,a._6+b._6,a._7+b._7,a._8+b._8,a._9+b._9,a._10+b._10,a._11+b._11)).count()
+res64: Long = 20
+
+scala> val rdd_regioni_1=rdd_regioni.reduceByKey((a,b)=>(a._1,a._2+b._2,a._3+b._3,a._4+b._4,a._5+b._5,a._6+b._6,a._7+b._7,a._8+b._8,a._9+b._9,a._10+b._10,a._11+b._11))
+rdd_regioni_1: org.apache.spark.rdd.RDD[(String, (String, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int))] = ShuffledRDD[40] at reduceByKey at <console>:53
+
+scala> rdd_regioni_1.take(2)
+res65: Array[(String, (String, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int))] = Array((ABRUZZO,(ABRUZZO,1052049,509116,542933,722930,362259,255001,461188,2117,4611,13)), (TRENTINO-ALTO ADIGE,(TRENTINO-ALTO ADIGE,792504,387839,404665,572486,282999,305322,261473,2698,2985,8)))
+
+scala> val rdd_final = rdd_regioni_1.map( arr => arr._1)
+rdd_final: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[41] at map at <console>:55
+
+scala> rdd_final.take(2)
+res66: Array[String] = Array(ABRUZZO, TRENTINO-ALTO ADIGE)
+
+scala> rdd_origin_split.take(5)
+res71: Array[Array[String]] = Array(Array(DESCREGIONE, DESCPROVINCIA, DESCCOMUNE, ELETTORI, ELETTORI_M, VOTANTI, VOTANTI_M, NUMVOTISI, NUMVOTINO, NUMVOTIBIANCHI, NUMVOTINONVALIDI, NUMVOTICONTESTATI), Array(ABRUZZO, "CHIETI                        ", "ALTINO                                                                                              ", 2288, 1101, 1496, 775, 533, 953, 2, 8, 0), Array(ABRUZZO, "CHIETI                        ", "ARCHI                                                                                               ", 1785, 861, 1241, 632, 442, 782, 3, 14, 0), Array(ABRUZZO, "CHIETI                        ", "ARI                                                                                                 ", 831, 402, 617, 328, 241, 366, 6, 4, 0), Array(ABRUZZ...
+scala> rdd_regioni_1.take(1)
+res72: Array[(String, (String, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int))] = Array((ABRUZZO,(ABRUZZO,1052049,509116,542933,722930,362259,255001,461188,2117,4611,13)))
+
+scala> val rdd_final = rdd_regioni_1.map(arr => (arr._1,arr._3,arr._4))
+<console>:55: error: value _3 is not a member of (String, (String, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int))
+         val rdd_final = rdd_regioni_1.map(arr => (arr._1,arr._3,arr._4))
+                                                              ^
+<console>:55: error: value _4 is not a member of (String, (String, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int))
+         val rdd_final = rdd_regioni_1.map(arr => (arr._1,arr._3,arr._4))
+                                                                     ^
+
+scala> val rdd_final = rdd_regioni_1.map(arr => (arr._1,arr._2))
+rdd_final: org.apache.spark.rdd.RDD[(String, (String, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int))] = MapPartitionsRDD[42] at map at <console>:55
+
+scala> rdd_final.take(1)
+res73: Array[(String, (String, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int))] = Array((ABRUZZO,(ABRUZZO,1052049,509116,542933,722930,362259,255001,461188,2117,4611,13)))
+
+scala> val rdd_final = rdd_regioni_1.map(arr => (arr._1,arr._2(1)))
+<console>:55: error: (String, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int) does not take parameters
+         val rdd_final = rdd_regioni_1.map(arr => (arr._1,arr._2(1)))
+                                                                ^
+
+scala> val rdd_final = rdd_regioni_1.map(arr => (arr._1,arr._2._1))
+rdd_final: org.apache.spark.rdd.RDD[(String, String)] = MapPartitionsRDD[43] at map at <console>:55
+
+scala> rdd_final.take(1)
+res74: Array[(String, String)] = Array((ABRUZZO,ABRUZZO))
+
+scala> rdd_regioni_1.map(arr => (arr._1,arr._2._2,arr._2._3)).take(1)
+res75: Array[(String, Int, Int)] = Array((ABRUZZO,1052049,509116))
+
+scala> rdd_regioni_1.map(arr => (arr._1,arr._2._2,arr._2._3,arr._2._4)).take(1)
+res76: Array[(String, Int, Int, Int)] = Array((ABRUZZO,1052049,509116,542933))
+
+scala> rdd_regioni_1.map(arr => (arr._1,arr._2._2,arr._2._3,arr._2._4,arr._2._5/arr._2._2)).take(1)
+res77: Array[(String, Int, Int, Int, Int)] = Array((ABRUZZO,1052049,509116,542933,0))
+
+scala> rdd_regioni_1.map(arr => (arr._1,arr._2._2,arr._2._3,arr._2._4,arr._2._5)).take(1)
+res78: Array[(String, Int, Int, Int, Int)] = Array((ABRUZZO,1052049,509116,542933,722930))
+
+scala> rdd_regioni_1.map(arr => (arr._1,arr._2._2,arr._2._3,arr._2._4,arr._2._5.toFloat/arr._2._2.toFloat*100)).take(1)
+res79: Array[(String, Int, Int, Int, Float)] = Array((ABRUZZO,1052049,509116,542933,68.716385))
+
+scala> rdd_regioni_1.map(arr => (arr._1,arr._2._2,arr._2._3,arr._2._4,arr._2._5.toFloat/arr._2._2.toFloat*100,arr._2._6.toFloat/arr._2._2.toFloat*100)).take(1)
+res80: Array[(String, Int, Int, Int, Float, Float)] = Array((ABRUZZO,1052049,509116,542933,68.716385,34.433662))
+
+scala> rdd_regioni_1.map(arr => (arr._1,arr._2._2,arr._2._3,arr._2._4,arr._2._5.toFloat/arr._2._2.toFloat*100,arr._2._6.toFloat/arr._2._2.toFloat*100)).take(2)
+res81: Array[(String, Int, Int, Int, Float, Float)] = Array((ABRUZZO,1052049,509116,542933,68.716385,34.433662), (TRENTINO-ALTO ADIGE,792504,387839,404665,72.23762,35.709473))
+
+scala> rdd_regioni_1.map(arr => (arr._1,arr._2._2,arr._2._3,arr._2._4,arr._2._5.toFloat/arr._2._2.toFloat*100,arr._2._6.toFloat/arr._2._5.toFloat*100)).take(2)
+res82: Array[(String, Int, Int, Int, Float, Float)] = Array((ABRUZZO,1052049,509116,542933,68.716385,50.109833), (TRENTINO-ALTO ADIGE,792504,387839,404665,72.23762,49.433346))
+
+scala> rdd_regioni_1.map(arr => (arr._1,arr._2._2,arr._2._3,arr._2._4,arr._2._5.toFloat/arr._2._2.toFloat*100)).take(2)
+res83: Array[(String, Int, Int, Int, Float)] = Array((ABRUZZO,1052049,509116,542933,68.716385), (TRENTINO-ALTO ADIGE,792504,387839,404665,72.23762))
+
+scala> rdd_regioni_1.map(arr => (arr._1,arr._2._2,arr._2._3,arr._2._4,arr._2._5.toFloat/arr._2._2.toFloat*100,arr._2._7.toFloat/arr._2._5.toFloat*100)).take(2)
+res84: Array[(String, Int, Int, Int, Float, Float)] = Array((ABRUZZO,1052049,509116,542933,68.716385,35.273262), (TRENTINO-ALTO ADIGE,792504,387839,404665,72.23762,53.332657))
+
+scala> rdd_regioni_1.map(arr => (arr._1,arr._2._2,arr._2._3,arr._2._4,arr._2._5.toFloat/arr._2._2.toFloat*100,arr._2._7.toFloat/arr._2._5.toFloat*100,arr._2._8.toFloat/arr._2._5.toFloat*100)).take(2)
+res85: Array[(String, Int, Int, Int, Float, Float, Float)] = Array((ABRUZZO,1052049,509116,542933,68.716385,35.273262,63.79428), (TRENTINO-ALTO ADIGE,792504,387839,404665,72.23762,53.332657,45.673256))
+
+scala> rdd_regioni_1.map(arr => (arr._1,arr._2._2,arr._2._3,arr._2._4,arr._2._5.toFloat/arr._2._2.toFloat*100,arr._2._7.toFloat/arr._2._5.toFloat*100,arr._2._8.toFloat/arr._2._5.toFloat*100,(arr._2._9.toFloat+arr._2._10.toFloat+arr._2._10)/arr._2._5.toFloat*100)).take(2)
+res86: Array[(String, Int, Int, Int, Float, Float, Float, Float)] = Array((ABRUZZO,1052049,509116,542933,68.716385,35.273262,63.79428,1.5684783), (TRENTINO-ALTO ADIGE,792504,387839,404665,72.23762,53.332657,45.673256,1.5140982))
+
+scala> rdd_regioni.take(2)
+res87: Array[(String, (String, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int))] = Array((ABRUZZO,(ABRUZZO,2288,1101,1187,1496,775,533,953,2,8,0)), (ABRUZZO,(ABRUZZO,1785,861,924,1241,632,442,782,3,14,0)))
+
+scala> rdd_regioni_1.map(arr => (arr._1,arr._2._2,arr._2._3,arr._2._4,arr._2._5.toFloat/arr._2._2.toFloat*100,arr._2._7.toFloat/arr._2._5.toFloat*100,arr._2._8.toFloat/arr._2._5.toFloat*100,(arr._2._9.toFloat+arr._2._10.toFloat+arr._2._11.toFloat)/arr._2._5.toFloat*100)).take(2)
+res88: Array[(String, Int, Int, Int, Float, Float, Float, Float)] = Array((ABRUZZO,1052049,509116,542933,68.716385,35.273262,63.79428,0.9324554), (TRENTINO-ALTO ADIGE,792504,387839,404665,72.23762,53.332657,45.673256,0.99408543))
+
+scala> val rdd_final=rdd_regioni_1.map(arr => (arr._1,arr._2._2,arr._2._3,arr._2._4,arr._2._5.toFloat/arr._2._2.toFloat*100,arr._2._7.toFloat/arr._2._5.toFloat*100,arr._2._8.toFloat/arr._2._5.toFloat*100,(arr._2._9.toFloat+arr._2._10.toFloat+arr._2._10)/arr._2._5.toFloat*100))
+rdd_final: org.apache.spark.rdd.RDD[(String, Int, Int, Int, Float, Float, Float, Float)] = MapPartitionsRDD[57] at map at <console>:55
+
+scala> rdd_final.take(20)
+res89: Array[(String, Int, Int, Int, Float, Float, Float, Float)] = Array((ABRUZZO,1052049,509116,542933,68.716385,35.273262,63.79428,1.5684783), (TRENTINO-ALTO ADIGE,792504,387839,404665,72.23762,53.332657,45.673256,1.5140982), (MARCHE,1189181,574341,614840,72.84283,44.533978,54.577118,1.4726985), (SICILIA,4013248,1915609,2097639,56.60876,28.154543,70.90463,1.6768273), (LAZIO,4402145,2097786,2304359,69.16339,36.416653,62.876934,1.2539278), (PIEMONTE,3396378,1633247,1763131,72.037445,43.10968,55.945606,1.6306692), (CALABRIA,1549305,747248,802057,54.410976,32.675163,66.39932,1.5860174), (LOMBARDIA,7480375,3616467,3863908,74.2277,44.177067,55.077976,1.2546937), (FRIULI-VENEZIA GIULIA,952494,457538,494956,72.51668,38.70717,60.48121,1.3736451), (MOLISE,256600,124778,131822,63.927513,38.8294...
+
+scala>rdd_final.saveAsTextFile("referendum2016-aggregated.csv") 
+
+
+
+
 
